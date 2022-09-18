@@ -1,7 +1,13 @@
 mod cgi_axum_router;
 
-use axum::handler::Handler;
-use axum::response::Response;
+use crate::cgi_axum_router::handle;
 use axum::{routing::get, Router};
 
-fn main() {}
+async fn root() -> String {
+    "Hello World".to_string()
+}
+
+fn main() {
+    let router = Router::new().route("/", get(root));
+    handle(router);
+}

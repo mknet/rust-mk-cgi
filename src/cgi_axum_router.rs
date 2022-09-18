@@ -1,8 +1,5 @@
-use axum::handler::Handler;
-use axum::http::request::Parts;
 use axum::http::Request;
 use axum::Router;
-use cgi::http::HeaderValue;
 use hyper::header::CONTENT_TYPE;
 use hyper::Body;
 use tower_service::Service;
@@ -12,10 +9,11 @@ pub fn handle(mut router: Router) {
         let future = async {
             let response = router.call(convert_request(request)).await.unwrap();
             let parts = response.into_parts();
-            let content_type = match parts.0.headers.get(CONTENT_TYPE) {
-                Some(x) => Option::Some(x.to_str().unwrap()),
-                None => Option::None,
-            };
+            let content_type = parts
+                .0
+                .headers
+                .get(CONTENT_TYPE)
+                .map(|x| x.to_str().unwrap());
             let bytes = hyper::body::to_bytes(parts.1).await.unwrap();
 
             cgi::binary_response(parts.0.status, content_type, bytes.into())
@@ -42,6 +40,7 @@ fn convert_request(request: cgi::Request) -> axum::http::Request<Body> {
     axum_request.unwrap()
 }
 
+#[cfg(test)]
 mod tests {
     use super::*;
     use axum::routing::get;
