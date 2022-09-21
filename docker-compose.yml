@@ -1,0 +1,8 @@
+version: '3'
+services:
+  apache:
+    image: hypoport/httpd-cgi
+    volumes:
+      - $PWD/target/release:/usr/local/apache2/cgi-bin
+    ports:
+      - 8000:80
