@@ -1,0 +1,11 @@
+#!/usr/bin/env httpx -p dev --httpfile
+
+# curl localhost:8000/cgi-bin/mk-cgi/
+GET {{host}}:8000/cgi-bin/mk-cgi/
+
+> {%
+client.test("Headers option exists", function() {
+  client.assert(response.body == "Hello World 😜", "Is nix gut");
+});
+%}
+
